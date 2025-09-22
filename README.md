@@ -119,62 +119,8 @@ graph TD
 - **Resource optimization** based on historical data
 - **Proactive maintenance** scheduling
 
----
 
-## 🌟 Research Foundation
 
-This project builds upon cutting-edge academic research:
 
-- **92.8% AI accuracy** benchmarks from Romanian municipality study
-- **Voice-first accessibility** principles from DFKI conversational UI research  
-- **Direct routing efficiency** improvements over traditional bureaucratic systems
-- **Civic engagement best practices** from systematic literature reviews
-
-*Full research citations and methodology available in our [Research Report](./docs/research-report.md)*
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from:
-- **Municipal IT departments** implementing smart city solutions
-- **Civic technology researchers** studying digital governance
-- **Accessibility advocates** improving inclusive design
-- **Open source developers** enhancing platform capabilities
-
-### Development Workflow
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **Romanian Municipality Research Team** for AI classification benchmarks
-- **DFKI Conversational UI Research** for accessibility insights
-- **Open Source Community** for foundational technologies
-- **Municipal workers worldwide** who inspired direct communication approach
-
----
-
-## 📞 Support & Contact
-
-- **Documentation**: [docs.civic-platform.org](https://docs.civic-platform.org)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/civic-issue-platform/issues)
-- **Community**: [Discord Server](https://discord.gg/civic-platform)
-- **Email**: support@civic-platform.org
-
----
-
-**🏆 Winner of Smart City Innovation Award 2025**
 
 *Transforming civic engagement through AI-powered direct communication between citizens and municipal services.*
