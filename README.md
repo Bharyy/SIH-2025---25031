@@ -1,7 +1,7 @@
 # SIH-2025---25031
 # PS-25031: Crowdsourced Civic Issue Reporting and Resolution System
 
-## 🚀 AI-Powered Voice-First Platform for Direct Municipal Issue Resolution
+## 🚀Direct Municipal Issue Resolution
 
 [![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com/)
