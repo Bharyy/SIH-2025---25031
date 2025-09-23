@@ -29,13 +29,13 @@ export default function Home() {
       {isLoaded && <Globe />}
       
       {/* Content overlay - positioned over the globe */}
-      <div className="relative z-50 min-h-screen flex flex-col items-center justify-center p-8">
+      <div className="relative z-50 min-h-screen flex flex-col items-center justify-center px-4 py-8 sm:p-8">
         {/* Title */}
-        <div className="text-center mb-8">
-          <h1 className="text-6xl font-bold bg-gradient-to-b from-white to-gray-300/80 bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-8 w-full">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-b from-white to-gray-300/80 bg-clip-text text-transparent mb-4 break-words">
             Civic App
           </h1>
-          <p className="text-center text-base md:text-lg font-normal text-neutral-200 max-w-md mx-auto">
+          <p className="text-center text-sm sm:text-base md:text-lg font-normal text-neutral-200 max-w-xs sm:max-w-md mx-auto">
             Report issues, track progress, and help build better communities.
           </p>
         </div>
@@ -56,32 +56,20 @@ export default function Home() {
         </Card> */}
 
         {/* Navigation Buttons */}
-        <div className="flex flex-col gap-4 w-full max-w-md">
-          <div className="flex gap-4 justify-center">
-            <Link href="/report">
-              <Button variant="outline" className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-accent/80">
+        <div className="flex flex-col gap-4 w-full max-w-xs sm:max-w-md">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center w-full">
+            <Link href="/report" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full bg-card/90 backdrop-blur-sm border-border/50 hover:bg-accent/80">
                 📝 Report Issue
               </Button>
             </Link>
+            <Link href="/track" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full bg-card/90 backdrop-blur-sm border-border/50 hover:bg-accent/80">
+                🔍 Track Issues
+              </Button>
+            </Link>
           </div>
-          
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-2">Test Issue Tracking:</p>
-            <div className="flex gap-2 justify-center">
-              <Link href="/track/1">
-                <Button variant="outline" size="sm" className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-accent/80">
-                  🔍 Track Issue #1
-                </Button>
-              </Link>
-              <Link href="/track/2">
-                <Button variant="outline" size="sm" className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-accent/80">
-                  🔍 Track Issue #2
-                </Button>
-              </Link>
-            </div>
-          </div>
-          
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-2 w-full">
             <Link href="/map">
               <Button variant="outline" className="w-full bg-card/90 backdrop-blur-sm border-border/50 hover:bg-accent/80">
                 🗺️ View Issues Map
@@ -103,5 +91,6 @@ export default function Home() {
     </div>
   );
 }
+
 
 

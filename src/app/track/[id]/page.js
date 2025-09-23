@@ -122,10 +122,17 @@ export default function TrackIssue({ params }) {
         setError(null);
 
         if (USE_MOCK) {
-          // Simulate API delay
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // Load from localStorage instead of mock data
+          await new Promise(resolve => setTimeout(resolve, 500));
           
-          const issueData = mockIssues[resolvedParams.id];
+          const storedIssues = localStorage.getItem('civicIssues');
+          if (!storedIssues) {
+            throw new Error("No issues found in storage");
+          }
+          
+          const issues = JSON.parse(storedIssues);
+          const issueData = issues.find(issue => issue.id === resolvedParams.id);
+          
           if (!issueData) {
             throw new Error("Issue not found");
           }
@@ -218,8 +225,8 @@ export default function TrackIssue({ params }) {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center py-6">
-          <h1 className="text-3xl font-bold text-gray-900">Issue Tracking</h1>
-          <p className="text-gray-600 mt-2">Track the progress of your reported issue</p>
+          <h1 className="text-3xl font-bold text-foreground">Issue Tracking</h1>
+          <p className="text-muted-foreground mt-2">Track the progress of your reported issue</p>
         </div>
 
         {/* Issue Details */}
@@ -234,24 +241,24 @@ export default function TrackIssue({ params }) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h3 className="font-semibold text-gray-900">Description</h3>
-              <p className="text-gray-600 mt-1">{issue.description}</p>
+              <h3 className="font-semibold text-foreground">Description</h3>
+              <p className="text-muted-foreground mt-1">{issue.description}</p>
             </div>
             
             <div>
-              <h3 className="font-semibold text-gray-900">Location</h3>
-              <p className="text-gray-600 mt-1">{issue.location.address}</p>
+              <h3 className="font-semibold text-foreground">Location</h3>
+              <p className="text-muted-foreground mt-1">{issue.location.address}</p>
             </div>
 
             {/* Current Status */}
-            <div className="p-4 bg-gray-50 rounded-lg">
+            <div className="p-4 bg-muted rounded-lg">
               <div className="flex items-center gap-3">
                 <div className={`w-3 h-3 rounded-full ${statusConfig[issue.status]?.color}`}></div>
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-foreground">
                     Current Status: {statusConfig[issue.status]?.label}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-muted-foreground">
                     {statusConfig[issue.status]?.description}
                   </p>
                 </div>
@@ -277,13 +284,13 @@ export default function TrackIssue({ params }) {
                     {/* Timeline line */}
                     <div className="flex flex-col items-center">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${
-                        isCompleted ? statusConfig[event.status]?.color : 'bg-gray-300'
+                        isCompleted ? statusConfig[event.status]?.color : 'bg-muted'
                       }`}>
                         {isCompleted ? statusConfig[event.status]?.icon : '⏳'}
                       </div>
                       {!isLast && (
                         <div className={`w-0.5 h-16 ${
-                          isCompleted ? 'bg-gray-300' : 'bg-gray-200'
+                          isCompleted ? 'bg-muted-foreground' : 'bg-muted'
                         }`}></div>
                       )}
                     </div>
@@ -291,14 +298,14 @@ export default function TrackIssue({ params }) {
                     {/* Event details */}
                     <div className="flex-1 pb-8">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-foreground">
                           {statusConfig[event.status]?.label}
                         </h3>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-muted-foreground">
                           {formatDate(event.timestamp)}
                         </span>
                       </div>
-                      <p className="text-gray-600 mt-1">{event.description}</p>
+                      <p className="text-muted-foreground mt-1">{event.message || event.description}</p>
                     </div>
                   </div>
                 );

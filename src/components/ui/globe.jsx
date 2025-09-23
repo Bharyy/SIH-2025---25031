@@ -19,9 +19,9 @@ export default function Globe() {
   }
 
   return (
-    <div className="absolute inset-0 flex items-center justify-center">
-      <div className="w-full h-full relative">
-        <div className="absolute inset-0 flex items-center justify-center z-10">
+    <div className="fixed inset-0 flex items-center justify-center">
+      <div className="w-[95vw] h-[95vw] max-w-[800px] max-h-[800px] min-w-[320px] min-h-[320px] relative">
+        <div className="absolute inset-0 flex items-center justify-center">
           <World />
         </div>
       </div>

@@ -118,19 +118,52 @@ export default function Report() {
 
     try {
       if (USE_MOCK) {
-        // Mock submission - save to local state
+        // Save to localStorage with proper structure for issue tracking
         await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
         
-        // Save to localStorage for persistence
-        const reports = JSON.parse(localStorage.getItem('civicReports') || '[]');
-        const newReport = {
-          id: Date.now(),
-          ...formData,
-          timestamp: new Date().toISOString(),
-          status: 'submitted'
+        const issueId = `issue_${Date.now()}`;
+        const currentTimestamp = new Date().toISOString();
+        
+        // Generate title from description (first 50 chars)
+        const title = formData.description.trim() 
+          ? formData.description.substring(0, 50) + (formData.description.length > 50 ? '...' : '')
+          : 'Civic Issue Report';
+        
+        const newIssue = {
+          id: issueId,
+          title: title,
+          description: formData.description || 'No description provided',
+          status: 'submitted',
+          priority: 'medium',
+          submittedAt: currentTimestamp,
+          location: {
+            address: formData.manualLocation || 'Location captured',
+            coordinates: formData.location ? {
+              lat: formData.location.latitude,
+              lng: formData.location.longitude,
+              accuracy: formData.location.accuracy
+            } : null
+          },
+          reporter: {
+            phone: formData.phoneNumber || 'Anonymous',
+            name: 'Reporter'
+          },
+          photo: formData.photo ? formData.photo.name : null,
+          assignedWorker: null,
+          timeline: [
+            {
+              status: 'submitted',
+              timestamp: currentTimestamp,
+              message: 'Issue submitted by citizen',
+              user: 'System'
+            }
+          ]
         };
-        reports.push(newReport);
-        localStorage.setItem('civicReports', JSON.stringify(reports));
+        
+        // Save to civicIssues instead of civicReports
+        const existingIssues = JSON.parse(localStorage.getItem('civicIssues') || '[]');
+        existingIssues.push(newIssue);
+        localStorage.setItem('civicIssues', JSON.stringify(existingIssues));
         
         toast.success("Report submitted successfully!");
         setFormData({ photo: null, phoneNumber: "", description: "", location: null, manualLocation: "" });

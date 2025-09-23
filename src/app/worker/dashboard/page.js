@@ -6,70 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-const USE_MOCK = true; // Set to false for production
-
-// Mock assigned issues data
-const mockAssignedIssues = {
-  "1234567890": [
-    {
-      id: "1",
-      title: "Broken Streetlight on Main Street",
-      description: "Streetlight has been flickering and completely went out last night. Located near the intersection with Oak Avenue.",
-      status: "worker_assigned",
-      priority: "high",
-      submittedAt: "2024-01-15T10:30:00Z",
-      assignedAt: "2024-01-15T11:15:00Z",
-      location: {
-        address: "123 Main Street, Downtown",
-        coordinates: { lat: 40.7128, lng: -74.0060 }
-      },
-      photo: "/api/placeholder/400/300", // Placeholder for demo
-      reporter: {
-        phone: "+1234567890",
-        name: "John Doe"
-      }
-    },
-    {
-      id: "2",
-      title: "Pothole on Oak Avenue",
-      description: "Large pothole causing damage to vehicles. About 2 feet wide and 6 inches deep.",
-      status: "worker_assigned",
-      priority: "medium",
-      submittedAt: "2024-01-14T14:20:00Z",
-      assignedAt: "2024-01-14T15:00:00Z",
-      location: {
-        address: "456 Oak Avenue, Midtown",
-        coordinates: { lat: 40.7589, lng: -73.9851 }
-      },
-      photo: "/api/placeholder/400/300",
-      reporter: {
-        phone: "+1234567891",
-        name: "Jane Smith"
-      }
-    }
-  ],
-  "0987654321": [
-    {
-      id: "3",
-      title: "Sidewalk Damage",
-      description: "Cracked and uneven sidewalk creating tripping hazard. Needs immediate attention.",
-      status: "worker_assigned",
-      priority: "high",
-      submittedAt: "2024-01-14T11:30:00Z",
-      assignedAt: "2024-01-14T12:00:00Z",
-      location: {
-        address: "789 Pine Street, Uptown",
-        coordinates: { lat: 40.7500, lng: -73.9900 }
-      },
-      photo: "/api/placeholder/400/300",
-      reporter: {
-        phone: "+1234567892",
-        name: "Bob Johnson"
-      }
-    }
-  ]
-};
-
 export default function WorkerDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -129,24 +65,25 @@ export default function WorkerDashboard() {
       setLoading(true);
       setError(null);
 
-      if (USE_MOCK) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      // Load real issues from localStorage
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const storedIssues = localStorage.getItem('civicIssues');
+      if (storedIssues) {
+        const allIssues = JSON.parse(storedIssues);
+        // For now, show submitted issues that can be assigned to workers
+        const availableIssues = allIssues.filter(issue => 
+          issue.status === 'submitted' || 
+          (issue.assignedWorker && issue.assignedWorker.phone === phone)
+        );
+        setAssignedIssues(availableIssues);
         
-        const issues = mockAssignedIssues[phone] || [];
-        setAssignedIssues(issues);
-        
-        if (issues.length === 0) {
-          toast.info("No assigned issues found for this phone number");
+        if (availableIssues.length === 0) {
+          toast.info("No issues available for assignment");
         }
       } else {
-        // Real API call
-        const response = await fetch(`/api/workers/${phone}/issues`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch issues: ${response.status}`);
-        }
-        const data = await response.json();
-        setAssignedIssues(data);
+        setAssignedIssues([]);
+        toast.info("No issues found");
       }
     } catch (err) {
       console.error('Error loading assigned issues:', err);
@@ -167,52 +104,46 @@ export default function WorkerDashboard() {
     try {
       setResolvingIssue(issueId);
       
-      if (USE_MOCK) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Update local state
-        setAssignedIssues(prevIssues => 
-          prevIssues.map(issue => 
-            issue.id === issueId 
-              ? { 
-                  ...issue, 
-                  status: 'resolved',
-                  resolvedAt: new Date().toISOString()
-                }
-              : issue
-          )
-        );
-        
-        toast.success("Issue marked as resolved successfully!");
-      } else {
-        // Real API call
-        const response = await fetch(`/api/workers/${phoneNumber}/issues/${issueId}/resolve`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to resolve issue: ${response.status}`);
+      // Update in localStorage
+      const existingIssues = JSON.parse(localStorage.getItem('civicIssues') || '[]');
+      const updatedIssues = existingIssues.map(issue => {
+        if (issue.id === issueId) {
+          const resolvedAt = new Date().toISOString();
+          const updatedIssue = {
+            ...issue,
+            status: 'resolved',
+            resolvedAt: resolvedAt
+          };
+          
+          // Add resolution to timeline
+          if (!updatedIssue.timeline) {
+            updatedIssue.timeline = [];
+          }
+          
+          updatedIssue.timeline.push({
+            timestamp: resolvedAt,
+            action: 'resolved',
+            description: `Issue resolved by worker (${phoneNumber})`,
+            user: 'worker'
+          });
+          
+          return updatedIssue;
         }
-
-        // Update local state with resolved issue
-        setAssignedIssues(prevIssues => 
-          prevIssues.map(issue => 
-            issue.id === issueId 
-              ? { 
-                  ...issue, 
-                  status: 'resolved',
-                  resolvedAt: new Date().toISOString()
-                }
-              : issue
-          )
-        );
-        
-        toast.success("Issue marked as resolved successfully!");
-      }
+        return issue;
+      });
+      
+      localStorage.setItem('civicIssues', JSON.stringify(updatedIssues));
+      
+      // Update local state
+      setAssignedIssues(prevIssues => 
+        prevIssues.map(issue => 
+          issue.id === issueId 
+            ? updatedIssues.find(updated => updated.id === issueId) || issue
+            : issue
+        )
+      );
+      
+      toast.success("Issue marked as resolved successfully!");
     } catch (err) {
       console.error('Error resolving issue:', err);
       toast.error(`Failed to resolve issue: ${err.message}`);
@@ -509,9 +440,6 @@ export default function WorkerDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between text-sm text-gray-600">
             <span>Worker Dashboard</span>
-            {USE_MOCK && (
-              <span className="text-blue-600">Mock data • Switch to production mode in code</span>
-            )}
           </div>
         </div>
       </div>
